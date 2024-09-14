@@ -1,0 +1,65 @@
+name: 'C++ CI'
+
+on:
+  push:
+    branches:
+      - main
+      - feature/github_actions
+
+jobs:
+  build:
+    runs-on: windows-latest
+    permissions: write-all
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          submodules: true
+      
+      # Установка необходимых зависимостей (например, vcpkg для управления библиотеками)
+      - name: Install Dependencies
+        run: |
+          choco install cmake --installargs 'ADD_CMAKE_TO_PATH=System'
+          choco install boost
+
+      # Генерация файлов сборки с помощью CMake
+      - name: Configure CMake
+        run: |
+          mkdir build
+          cd build
+          cmake .. -DPATCH_VERSION=${{ github.run_number }}
+
+      # Сборка проекта
+      - name: Build
+        run: |
+          cd build
+          cmake --build . --config Release
+
+      # Запуск тестов
+      - name: Run Tests
+        run: |
+          cd build
+          ctest --output-on-failure
+
+      # Создание релиза
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.run_number }}
+          release_name: Release ${{ github.run_number }}
+          draft: false
+          prerelease: false
+
+      # Загрузка артефактов релиза
+      - name: Upload Release Asset
+        id: upload-release-asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./build/helloworld-0.0.${{ github.run_number }}-Windows.exe
+          asset_name: helloworld-0.0.${{ github.run_number }}-Windows.exe
+          asset_content_type: application/octet-stream
