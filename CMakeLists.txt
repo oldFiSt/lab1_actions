@@ -61,10 +61,6 @@ set(CPACK_PACKAGE_VERSION "${PROJECT_VERSION}")
 set(CPACK_PACKAGE_CONTACT "example@example.com")
 
 # Дополнительные метаданные (по желанию)
-set(CPACK_PACKAGE_DESCRIPTION "Your package description here")
-set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "A brief summary of your package")
-set(CPACK_PACKAGE_LICENSE "LICENSE")  # Замените на вашу лицензию
-set(CPACK_PACKAGE_URL "https://github.com/oldFiSt/lab1_actions.git")  # Замените на URL вашего проекта
 
 include(CPack)
 

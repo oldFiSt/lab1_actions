@@ -44,27 +44,27 @@ jobs:
       # Создание релиза на GitHub только если тег не существует
       - name: Create Release
         id: create_release
-        if: env.tag_exists == 'false'  # Условие для выполнения шага
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: "release-${{ github.run_number }}-${{ github.sha }}"  # Используйте уникальный тег для каждого релиза 
-          release_name: Release ${{ github.run_number }}
-          draft: false
-          prerelease: false
-
-      # Загрузка артефактов релиза на GitHub только если релиз был создан
-      - name: Upload Release Asset
-        id: upload-release-asset
         if: env.tag_exists == 'false'  # Условие для выполнения шага 
-        uses: actions/upload-release-asset@v1 
+        uses: actions/create-release@v1 
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
         with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }} 
-          asset_path: ./helloworld-0.0.${{ github.run_number }}-Linux.deb 
-          asset_name: helloworld-0.0.${{ github.run_number }}-Linux.deb 
+          tag_name: "release-${{ github.run_number }}-${{ github.sha }}"  # Используйте уникальный тег для каждого релиза 
+          release_name: Release ${{ github.run_number }} 
+          draft: false 
+          prerelease: false 
+
+      # Загрузка артефактов релиза на GitHub только если релиз был создан 
+      - name: Upload Release Asset 
+        id: upload-release-asset 
+        if: env.tag_exists == 'false'  # Условие для выполнения шага 
+        uses: actions/upload-release-asset@v1  
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}  
+          asset_path: ./helloworld-0.0.${{ github.run_number }}-Linux.deb  
+          asset_name: helloworld-0.0.${{ github.run_number }}-Linux.deb  
           asset_content_type: application/vnd.debian.binary-package 
 
   build-macos:
@@ -105,13 +105,13 @@ jobs:
       - name: Create Release for macOS 
         id: create_release_macos 
         if: env.tag_exists == 'false'  
-        uses: actions/create-release@v1 
+        uses: actions/create-release@v1  
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  
         with:
           tag_name: "release-${{ github.run_number }}-${{ github.sha }}"  
-          release_name: Release ${{ github.run_number }} 
-          draft: false 
+          release_name: Release ${{ github.run_number }}  
+          draft: false  
           prerelease: false 
 
       # Загрузка артефактов релиза на GitHub для macOS только если релиз был создан 
