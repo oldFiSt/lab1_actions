@@ -38,10 +38,10 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: "release-${{ github.run_number }}-${{ github.sha }}"
+          tag_name: "release-${{ github.run_number }}-${{ github.sha }}-$(date +%s)"
           release_name: Release ${{ github.run_number }}
           draft: false
-          prerelease: false
+          prerelease: false 
 
       - name: Upload Release Asset 
         id: upload-release-asset 
@@ -77,28 +77,9 @@ jobs:
         id: check_tag_exists_macos 
         run: |
           TAG="release-${{ github.run_number }}-${{ github.sha }}"
-          git tag -l | grep -q "$TAG" && echo "tag_exists=true" >> $GITHUB_ENV || echo "tag_exists=false" >> $GITHUB_ENV
+          git tag -l | grep -q "$TAG" && echo "tag_exists=true" >> $GITHUB_ENV || echo "tag_exists=false" >> $GITHUB_E
 
-      - name: Create Release for macOS
-        id: create_release_macos
-        if: env.tag_exists == 'false'
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: "release-${{ github.run_number }}-${{ github.sha }}"
-          release_name: Release ${{ github.run_number }}
-          draft: false
-          prerelease: false
 
-      - name: Upload Release Asset for macOS
-        id: upload-release-asset-macos 
-        if: env.tag_exists == 'false'
-        uses: actions/upload-release-asset@v1  
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  
-        with:
-          upload_url: ${{ steps.create_release_macos.outputs.upload_url }}  
-          asset_path: ./helloworld-0.0.${{ github.run_number }}-macOS.pkg  
-          asset_name: helloworld-0.0.${{ github.run_number }}-macOS.pkg  
-          asset_content_type: application/octet-stream 
+
+
+
