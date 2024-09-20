@@ -36,9 +36,9 @@ jobs:
         run: |
           if git tag -l | grep -q "${{ github.run_number }}"; then
             echo "Tag already exists. Skipping release creation."
-            echo "tag_exists=true" >> $GITHUB_ENV  # Устанавливаем переменную окружения
+            echo "tag_exists=true" >> $GITHUB_ENV  # Устанавливаем переменную окружения для проверки
           else
-            echo "tag_exists=false" >> $GITHUB_ENV  # Устанавливаем переменную окружения
+            echo "tag_exists=false" >> $GITHUB_ENV  # Устанавливаем переменную окружения для проверки
           fi
 
       # Создание релиза на GitHub только если тег не существует
@@ -49,7 +49,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ github.run_number }}
+          tag_name: ${{ github.run_number }}  # Или используйте уникальное имя тега
           release_name: Release ${{ github.run_number }}
           draft: false
           prerelease: false
@@ -109,7 +109,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
         with:
-          tag_name: ${{ github.run_number }} 
+          tag_name: ${{ github.run_number }}  # Или используйте уникальное имя тега 
           release_name: Release ${{ github.run_number }} 
           draft: false 
           prerelease: false 
