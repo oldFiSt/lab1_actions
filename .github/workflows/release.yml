@@ -42,6 +42,14 @@ jobs:
           draft: false
           prerelease: false
 
+      # Проверка наличия артефакта перед загрузкой
+      - name: Check for Linux Package
+        run: |
+          if [ ! -f ./helloworld-0.0.${{ github.run_number }}-Linux.deb ]; then
+            echo "Linux package not found!"
+            exit 1
+          fi
+      
       # Загрузка артефактов релиза на GitHub
       - name: Upload Release Asset
         id: upload-release-asset
@@ -89,15 +97,22 @@ jobs:
           draft: false
           prerelease: false
 
-      # Загрузка артефактов релиза на GitHub
-      - name: Upload Release Asset
-        id: upload-release-asset
-        uses: actions/upload-release-asset@v1
+      # Проверка наличия артефакта перед загрузкой для macOS
+      - name: Check for macOS Package
+        run: |
+          if [ ! -f ./helloworld-0.0.${{ github.run_number }}-macOS.pkg ]; then
+            echo "macOS package not found!"
+            exit 1
+          fi
+      
+      # Загрузка артефактов релиза на GitHub для macOS 
+      - name: Upload Release Asset for macOS 
+        id: upload-release-asset-macos 
+        uses: actions/upload-release-asset@v1 
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
         with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./helloworld-0.0.${{ github.run_number }}-macOS.pkg  # Убедитесь, что имя файла соответствует созданному пакету 
-          asset_name: helloworld-0.0.${{ github.run_number }}-macOS.pkg  # Убедитесь, что имя файла соответствует созданному пакету 
-          asset_content_type: application/octet-stream  # Измените тип контента, если необходимо для macOS 
- 
+          upload_url: ${{ steps.create_release.outputs.upload_url }} 
+          asset_path: ./helloworld-0.0.${{ github.run_number }}-macOS.pkg  
+          asset_name: helloworld-0.0.${{ github.run_number }}-macOS.pkg  
+          asset_content_type: application/octet-stream  

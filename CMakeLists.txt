@@ -61,6 +61,9 @@ set(CPACK_BUNDLE_NAME "YourBundleName")  # Замените на желаемо�
 # Установка пути к Info.plist для CPack
 set(CPACK_BUNDLE_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/resources/Info.plist")  # Укажите правильный путь к вашему Info.plist
 
+# Установка пути к иконке для CPack
+set(CPACK_BUNDLE_ICON "${CMAKE_CURRENT_SOURCE_DIR}/resources/ic.icns")  # Укажите правильный путь к вашему файлу иконки
+
 # Установка версии пакета для CPack
 set(CPACK_PACKAGE_VERSION "${PROJECT_VERSION}")
 set(CPACK_PACKAGE_CONTACT "example@example.com")
