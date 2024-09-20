@@ -68,6 +68,10 @@ set(CPACK_BUNDLE_ICON "${CMAKE_CURRENT_SOURCE_DIR}/resources/ic.icns")  # Ука
 set(CPACK_PACKAGE_VERSION "${PROJECT_VERSION}")
 set(CPACK_PACKAGE_CONTACT "example@example.com")
 
+# Дополнительные метаданные (по желанию)
+set(CPACK_PACKAGE_DESCRIPTION "Your package description here")
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "A brief summary of your package")
+
 include(CPack)
 
 enable_testing()
