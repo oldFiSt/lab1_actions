@@ -15,7 +15,8 @@ jobs:
         with:
           submodules: true
       
-      - run: sudo apt-get update && sudo apt-get install -y libboost-test-dev libglfw3-dev libglm-dev
+      - run: |
+          sudo apt-get update && sudo apt-get install -y libboost-test-dev libglfw3-dev libglm-dev || { echo 'Failed to install dependencies'; exit 1; }
       
       - run: cmake . -DPATCH_VERSION=${{ github.run_number }}
       
@@ -38,7 +39,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: "release-${{ github.run_number }}-${{ github.sha }}-$(date +%s)"
+          tag_name: "release-${{ github.run_number }}-${{ github.sha }}"
           release_name: Release ${{ github.run_number }}
           draft: false
           prerelease: false 
@@ -63,7 +64,8 @@ jobs:
         with:
           submodules: true
       
-      - run: brew update && brew install boost glfw glm
+      - run: |
+          brew update && brew install boost glfw glm || { echo 'Failed to install dependencies'; exit 1; }
       
       - run: cmake . -DPATCH_VERSION=${{ github.run_number }}
       
@@ -77,9 +79,8 @@ jobs:
         id: check_tag_exists_macos 
         run: |
           TAG="release-${{ github.run_number }}-${{ github.sha }}"
-          git tag -l | grep -q "$TAG" && echo "tag_exists=true" >> $GITHUB_ENV || echo "tag_exists=false" >> $GITHUB_E
-
-
-
-
-
+          if git tag -l | grep -q "$TAG"; then
+            echo "tag_exists=true" >> $GITHUB_ENV;
+          else
+            echo "tag_exists=false" >> $GITHUB_ENV;
+          fi
