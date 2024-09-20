@@ -8,7 +8,10 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]  # Определяем операционные системы для сборки
     permissions: write-all
     steps:
       - uses: actions/checkout@v3
@@ -16,7 +19,13 @@ jobs:
           submodules: true
       
       # Установка необходимых зависимостей
-      - run: sudo apt-get update && sudo apt-get install -y libboost-test-dev libglfw3-dev libglm-dev
+      - name: Install Dependencies
+        run: |
+          if [[ "${{ matrix.os }}" == "ubuntu-latest" ]]; then
+            sudo apt-get update && sudo apt-get install -y libboost-test-dev libglfw3-dev libglm-dev;
+          elif [[ "${{ matrix.os }}" == "macos-latest" ]]; then
+            brew update && brew install boost glfw glm;
+          fi
       
       # Генерация файлов сборки с помощью CMake
       - run: cmake . -DPATCH_VERSION=${{ github.run_number }}
@@ -50,6 +59,12 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./helloworld-0.0.${{ github.run_number }}-Linux.deb
-          asset_name: helloworld-0.0.${{ github.run_number }}-Linux.deb
-          asset_content_type: application/vnd.debian.binary-package
+          asset_path: |
+            ${{ if eq(matrix.os, 'ubuntu-latest') }} ./helloworld-0.0.${{ github.run_number }}-Linux.deb
+            ${{ if eq(matrix.os, 'macos-latest') }} ./helloworld-0.0.${{ github.run_number }}-macOS.pkg  # Измените имя файла на соответствующее для macOS
+          asset_name: |
+            ${{ if eq(matrix.os, 'ubuntu-latest') }} helloworld-0.0.${{ github.run_number }}-Linux.deb
+            ${{ if eq(matrix.os, 'macos-latest') }} helloworld-0.0.${{ github.run_number }}-macOS.pkg  # Измените имя файла на соответствующее для macOS
+          asset_content_type: |
+            ${{ if eq(matrix.os, 'ubuntu-latest') }} application/vnd.debian.binary-package
+            ${{ if eq(matrix.os, 'macos-latest') }} application/octet-stream  # Измените тип контента, если необходимо для macOS
