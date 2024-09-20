@@ -8,7 +8,7 @@ on:
 
 jobs:
   build:
-    runs-on: macos-latest  # Изменено на macos-latest
+    runs-on: macos-latest
     permissions: write-all
     steps:
       # Шаг 1: Проверка исходного кода из репозитория
@@ -17,7 +17,7 @@ jobs:
           submodules: true
       
       # Шаг 2: Установка необходимых зависимостей
-      - run: brew update && brew install boost glfw glm  # Используем Homebrew для установки зависимостей
+      - run: brew update && brew install boost glfw glm || { echo "Failed to install dependencies"; exit 1; }
       
       # Шаг 3: Генерация файлов сборки с помощью CMake
       - run: cmake . -DPATCH_VERSION=${{ github.run_number }}
@@ -29,9 +29,17 @@ jobs:
       - run: cmake --build . --target test
       
       # Шаг 6: Создание пакета (если необходимо)
-      - run: cmake --build . --target package
+      - run: cmake --build . --target package || { echo "Package creation failed"; exit 1; }
       
-      # Шаг 7: Создание релиза на GitHub
+      # Шаг 7: Проверка существования пакета перед загрузкой
+      - name: Check if package exists
+        run: |
+          if [ ! -f ./helloworld-0.0.${{ github.run_number }}-macOS.pkg ]; then
+            echo "Package not found!"
+            exit 1
+          fi
+      
+      # Шаг 8: Создание релиза на GitHub
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
@@ -43,7 +51,7 @@ jobs:
           draft: false
           prerelease: false
 
-      # Шаг 8: Загрузка артефактов релиза на GitHub
+      # Шаг 9: Загрузка артефактов релиза на GitHub
       - name: Upload Release Asset
         id: upload-release-asset
         uses: actions/upload-release-asset@v1
@@ -51,6 +59,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./helloworld-0.0.${{ github.run_number }}-macOS.pkg  # Измените имя файла на соответствующее для macOS
-          asset_name: helloworld-0.0.${{ github.run_number }}-macOS.pkg  # Измените имя файла на соответствующее для macOS
-          asset_content_type: application/octet-stream  # Измените тип контента, если необходимо
+          asset_path: ./helloworld-0.0.${{ github.run_number }}-macOS.pkg 
+          asset_name: helloworld-0.0.${{ github.run_number }}-macOS.pkg 
+          asset_content_type: application/octet-stream 
