@@ -18,23 +18,15 @@ set_target_properties(helloworld_cli helloworld test_version PROPERTIES
     CXX_STANDARD_REQUIRED ON
 )
 
-target_include_directories(helloworld
-    PRIVATE "${CMAKE_BINARY_DIR}"
-)
+target_include_directories(helloworld PRIVATE "${CMAKE_BINARY_DIR}")
 
 set_target_properties(test_version PROPERTIES
     COMPILE_DEFINITIONS BOOST_TEST_DYN_LINK
     INCLUDE_DIRECTORIES ${Boost_INCLUDE_DIR}
 )
 
-target_link_libraries(helloworld_cli PRIVATE
-    helloworld
-)
-
-target_link_libraries(test_version
-    ${Boost_LIBRARIES}
-    helloworld
-)
+target_link_libraries(helloworld_cli PRIVATE helloworld)
+target_link_libraries(test_version ${Boost_LIBRARIES} helloworld)
 
 if (MSVC)
     target_compile_options(helloworld_cli PRIVATE /W4)
@@ -56,7 +48,7 @@ else()
 endif()
 
 # Установка имени пакета для CPack
-set(CPACK_BUNDLE_NAME "YourBundleName")  # Замените на желаемое имя вашего пакета
+set(CPACK_BUNDLE_NAME "LABABAB")  # Замените на имя вашего приложения
 
 # Установка пути к Info.plist для CPack
 set(CPACK_BUNDLE_PLIST "${CMAKE_CURRENT_SOURCE_DIR}/resources/Info.plist")  # Укажите правильный путь к вашему Info.plist
@@ -71,6 +63,8 @@ set(CPACK_PACKAGE_CONTACT "example@example.com")
 # Дополнительные метаданные (по желанию)
 set(CPACK_PACKAGE_DESCRIPTION "Your package description here")
 set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "A brief summary of your package")
+set(CPACK_PACKAGE_LICENSE "LICENSE")  # Замените на вашу лицензию
+set(CPACK_PACKAGE_URL "https://github.com/oldFiSt/lab1_actions.git")  # Замените на URL вашего проекта
 
 include(CPack)
 

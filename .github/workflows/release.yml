@@ -34,7 +34,7 @@ jobs:
       - name: Check if tag exists
         id: check_tag_exists
         run: |
-          if git tag -l | grep -q "${{ github.run_number }}"; then
+          if git tag -l | grep -q "release-${{ github.run_number }}-${{ github.sha }}"; then
             echo "Tag already exists. Skipping release creation."
             echo "tag_exists=true" >> $GITHUB_ENV  # Устанавливаем переменную окружения
           else
@@ -94,7 +94,7 @@ jobs:
       - name: Check if tag exists for macOS 
         id: check_tag_exists_macos 
         run: |
-          if git tag -l | grep -q "${{ github.run_number }}"; then 
+          if git tag -l | grep -q "release-${{ github.run_number }}-${{ github.sha }}"; then 
             echo "Tag already exists for macOS. Skipping release creation." 
             echo "tag_exists=true" >> $GITHUB_ENV  
           else 
