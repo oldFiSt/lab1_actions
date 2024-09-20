@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.10)
 
 set(PATCH_VERSION "1" CACHE INTERNAL "Patch version")
-set(PROJECT_VERSION 0.0.${PATCH_VERSION})  # Исправлено имя переменной
+set(PROJECT_VERSION 0.0.${PATCH_VERSION})
 
 project(helloworld VERSION ${PROJECT_VERSION})
 
@@ -48,12 +48,15 @@ endif()
 
 install(TARGETS helloworld_cli RUNTIME DESTINATION bin)
 
-# Установка генератора CPack в зависимости от платформы
+# Установка генератора CPack для macOS или Linux
 if (APPLE)
     set(CPACK_GENERATOR "Bundle")  # Для создания .app или .pkg на macOS
 else()
     set(CPACK_GENERATOR "DEB")  # Для создания .deb на Linux
 endif()
+
+# Установка имени пакета для CPack
+set(CPACK_BUNDLE_NAME "YourBundleName")  # Замените на желаемое имя вашего пакета
 
 # Установка версии пакета для CPack
 set(CPACK_PACKAGE_VERSION "${PROJECT_VERSION}")
